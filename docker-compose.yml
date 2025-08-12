@@ -1,0 +1,18 @@
+services:
+  flutter:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    working_dir: /work
+    volumes:
+      - ./:/work
+      # caches úteis (opcional, acelera builds)
+      - flutter_pub_cache:/home/dev/.pub-cache
+      - gradle_cache:/home/dev/.gradle
+    ports:
+      - "8080:8080"   # para rodar Flutter web no host
+    environment:
+      - PUB_CACHE=/home/dev/.pub-cache
+volumes:
+  flutter_pub_cache:
+  gradle_cache:
