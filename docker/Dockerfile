@@ -41,11 +41,17 @@ RUN git clone --depth 1 -b ${FLUTTER_CHANNEL} https://github.com/flutter/flutter
  && flutter precache \
  && flutter doctor -v
 
-# Sanity checks
-RUN ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --version
-RUN which flutter || true
+# Crie o usuário ANTES de trocar para ele
+RUN useradd -ms /bin/bash dev \
+ && chown -R dev:dev ${FLUTTER_HOME}
 
-# Usuário não-root (opcional)
-RUN useradd -ms /bin/bash dev
+# (opcional) se quiser garantir leitura/escrita no SDK Android:
+# RUN chown -R dev:dev ${ANDROID_SDK_ROOT}
+
+# Agora sim, vira o usuário dev
 USER dev
+
+# E grava o safe.directory no perfil do dev (persistente na imagem)
+RUN git config --global --add safe.directory ${FLUTTER_HOME}
+
 WORKDIR /work
